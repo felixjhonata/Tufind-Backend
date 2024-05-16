@@ -4,12 +4,11 @@ import (
 	"Tufind-Backend/database"
 	"Tufind-Backend/models"
 	"Tufind-Backend/routes"
-
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-
-	// cors "github.com/rs/cors/wrapper/gin"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -19,7 +18,17 @@ func main() {
 	database.DB.AutoMigrate(&models.User{})
 	//create gin server
 	router := gin.Default()
-	// router.Use(cors.Default())
+	//cors
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
+	config.ExposeHeaders = []string{"Content-Length"}
+	config.AllowCredentials = true
+	config.MaxAge = 12 * time.Hour
+
+	router.Use(cors.New(config))
+
 	router.Use(gin.Logger())
 	routes.UserRoutes(router)
 	routes.TutorRoutes(router)
