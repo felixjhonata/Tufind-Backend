@@ -4,18 +4,22 @@ import (
 	"Tufind-Backend/database"
 	"Tufind-Backend/models"
 	"Tufind-Backend/routes"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	//initialize database
 	database.ConnectDatabase()
-	database.DB.AutoMigrate(&models.Tutor{})
-	database.DB.AutoMigrate(&models.User{})
+
+	err := database.DB.AutoMigrate(&models.Tutor{}, &models.Bid{}, &models.User{}, &models.Auction{})
+	if err != nil {
+		log.Fatalln("Failed to migrate User schema:", err)
+	}
 	//create gin server
 	router := gin.Default()
 	//cors
@@ -32,8 +36,6 @@ func main() {
 	router.Use(gin.Logger())
 	routes.UserRoutes(router)
 	routes.TutorRoutes(router)
-	routes.InvoiceRoutes(router)
-	routes.OrderRoutes(router)
-	routes.OrderItemRoutes(router)
+	routes.AuctionRoutes(router)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

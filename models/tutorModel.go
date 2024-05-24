@@ -1,6 +1,8 @@
 package models
 
+import "gorm.io/gorm"
+
 type Tutor struct {
-	Id        int64  `gorm:"primaryKey" json:"id"`
-	NamaTutor string `gorm:"type:varchar(250)" json:"nama_tutor"`
+	gorm.Model
+	ID uint `gorm:"primaryKey" json:"id"`
 }

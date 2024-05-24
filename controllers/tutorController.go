@@ -6,11 +6,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
+	// "github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
 
-var validate = validator.New()
+// var validate = validator.New()
 
 func GetTutors() gin.HandlerFunc {
 	return func(c *gin.Context) {
