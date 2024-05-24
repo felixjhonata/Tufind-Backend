@@ -11,6 +11,11 @@ import (
 	"time"
 )
 
+type CreateAuctionInput struct {
+	ExpectedEndTime time.Time `json:"expected_end_time" binding:"required"`
+	TutorIDs        []uint    `json:"tutor_ids" binding:"required"`
+}
+
 func GetAuctionTimer(c *gin.Context) {
 
 	var auction models.Auction
@@ -28,7 +33,7 @@ func GetAuctionTimer(c *gin.Context) {
 	}
 
 	currentTime := time.Now()
-	remainingTime := auction.EndTime.Sub(currentTime)
+	remainingTime := auction.ExpectedEndTime.Sub(currentTime)
 	if remainingTime < 0 {
 		remainingTime = 0
 	}
@@ -39,17 +44,28 @@ func GetAuctionTimer(c *gin.Context) {
 }
 
 func CreateAuction(c *gin.Context) {
-	var auction models.Auction
-	if err := c.ShouldBindJSON(&auction); err != nil {
+	// var auction models.Auction
+	var input CreateAuctionInput
+	wib, err := time.LoadLocation("Asia/Jakarta")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load WIB location"})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	result := database.DB.Create(&auction)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
+	// Create the auction
+	auction := models.Auction{ExpectedEndTime: input.ExpectedEndTime.In(wib)}
+	database.DB.Create(&auction)
+
+	// Add tutors to the auction
+	for _, tutorID := range input.TutorIDs {
+		auctionTutor := models.AuctionTutor{AuctionID: auction.ID, TutorID: tutorID}
+		database.DB.Create(&auctionTutor)
 	}
 
-	c.JSON(http.StatusOK, auction)
+	c.JSON(http.StatusCreated, auction)
 }

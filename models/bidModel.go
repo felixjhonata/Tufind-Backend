@@ -2,23 +2,18 @@ package models
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
-// type Bid struct {
-// 	ID        uint      `gorm:"primaryKey" json:"id"`
-// 	AuctionID uint      `json:"auction_id"`
-// 	Auction   Auction   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"auction"`
-// 	UserID    uint      `json:"user_id"`
-// 	User      User      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"user"`
-// 	Bidder    string    `json:"bidder"`
-// 	Amount    float64   `json:"amount"`
-// 	BidTime   time.Time `json:"bid_time"`
-// }
-
 type Bid struct {
+	gorm.Model
 	ID        int       `json:"id" gorm:"primarykey"`
-	AuctionID int       `json:"auction_id"`
-	Bidder    string    `json:"bidder"`
+	AuctionID uint      `json:"auction_id"`
+	Auction   Auction   `gorm:"foreignKey:AuctionID" json:"auctions"`
+	UserID    uint      `json:"user_id"`
+	User      User      `gorm:"foreignKey:UserID" json:"user"`
 	Amount    float64   `json:"amount"`
+	Session   int       `json:"session"`
 	BidTime   time.Time `json:"bid_time"`
 }

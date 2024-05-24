@@ -3,7 +3,6 @@ package routes
 import (
 	controller "Tufind-Backend/controllers"
 	"Tufind-Backend/middleware"
-
 	"github.com/gin-gonic/gin"
 )
 

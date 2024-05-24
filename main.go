@@ -16,7 +16,7 @@ func main() {
 	//initialize database
 	database.ConnectDatabase()
 
-	err := database.DB.AutoMigrate(&models.Tutor{}, &models.Bid{}, &models.User{}, &models.Auction{})
+	err := database.DB.AutoMigrate(&models.Tutor{}, &models.Bid{}, &models.User{}, &models.Auction{}, &models.AuctionTutor{})
 	if err != nil {
 		log.Fatalln("Failed to migrate User schema:", err)
 	}
@@ -33,9 +33,10 @@ func main() {
 
 	router.Use(cors.New(config))
 
-	router.Use(gin.Logger())
 	routes.UserRoutes(router)
 	routes.TutorRoutes(router)
 	routes.AuctionRoutes(router)
+	routes.Auction_TutorRoutes(router)
+	routes.BidRoutes(router)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
