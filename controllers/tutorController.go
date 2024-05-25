@@ -3,9 +3,11 @@ package controllers
 import (
 	"Tufind-Backend/database"
 	"Tufind-Backend/models"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	// "github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
@@ -67,4 +69,28 @@ func UpdateTutor() gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{"message": "Data update Success"})
 
 	}
+}
+func UpdateTutorPrice(db *gorm.DB, tutorID uint, newprice uint) error {
+	// Retrieve the bid from the database
+	var tutor models.Tutor
+	result := db.First(&tutor, tutorID)
+	if result.Error != nil {
+		return fmt.Errorf("failed to find bid: %v", result.Error)
+	}
+
+	// Update the bid amount
+	// if newprice > tutor.Price{
+	// 	bid.Price = newAmount
+	// } else {
+	// 	return fmt.Errorf("bid must be bigger than start price")
+	// }
+	tutor.Price = newprice
+	// Save the updated bid back to the database
+	result = db.Save(&tutor)
+	if result.Error != nil {
+		return fmt.Errorf("failed to update tutor price: %v", result.Error)
+	}
+
+	fmt.Printf("tutor price updated successfully for tutor ID %d\n", tutor.ID)
+	return nil
 }

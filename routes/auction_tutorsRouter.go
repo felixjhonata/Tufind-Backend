@@ -10,7 +10,7 @@ import (
 func Auction_TutorRoutes(incomingRoutes *gin.Engine) {
 	protected := incomingRoutes.Group("/api/protected").Use(middlewares.Authentication())
 	{
-		protected.GET("/auctiontutor", controller.GetAuctionTutors)
+		protected.GET("/auctiontutors/:auction_id", controller.GetAuctionTutors)
 	}
 
 }

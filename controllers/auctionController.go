@@ -69,3 +69,25 @@ func CreateAuction(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, auction)
 }
+
+func GetAuction(c *gin.Context) {
+	var auction models.Auction
+	auction, err := GetLastCreatedAuction(database.DB)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, auction)
+
+}
+
+func GetLastCreatedAuction(db *gorm.DB) (models.Auction, error) {
+	var auction models.Auction
+	// Perform the query and check the error
+	err := db.Order("id desc").First(&auction).Error
+	if err != nil {
+		return auction, err
+	}
+	return auction, nil
+}

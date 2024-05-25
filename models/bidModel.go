@@ -2,18 +2,36 @@ package models
 
 import (
 	"time"
+)
 
-	"gorm.io/gorm"
+const (
+	BidStatusInvalid = "invalid"
+	BidStatusValid   = "valid"
+	BidStatusNotPaid = "not_paid"
+	BidStatusDone    = "done"
 )
 
 type Bid struct {
-	gorm.Model
-	ID        int       `json:"id" gorm:"primarykey"`
-	AuctionID uint      `json:"auction_id"`
-	Auction   Auction   `gorm:"foreignKey:AuctionID" json:"auctions"`
-	UserID    uint      `json:"user_id"`
-	User      User      `gorm:"foreignKey:UserID" json:"user"`
-	Amount    float64   `json:"amount"`
-	Session   int       `json:"session"`
-	BidTime   time.Time `json:"bid_time"`
+	ID             int          `gorm:"primarykey"`
+	UserID         uint         `json:"user_id"`
+	User           User         `gorm:"foreignKey:UserID" json:"user"`
+	AuctionTutorID uint         `json:"auctiontutor_id"`
+	AuctionTutor   AuctionTutor `gorm:"foreignKey:AuctionTutorID" json:"auctiontutor"`
+	Price          uint         `json:"price"`
+	Session        int          `json:"session"`
+	BidTime        time.Time    `json:"bid_time"`
+	Paid           bool         `json:"paid"`
+}
+
+func (b *Bid) DetermineStatus(price uint) string {
+	if b.Price == price {
+		return BidStatusValid
+	}
+	if b.AuctionTutor.Auction.IsDone() {
+		if b.Paid {
+			return BidStatusDone
+		}
+		return BidStatusNotPaid
+	}
+	return BidStatusInvalid
 }

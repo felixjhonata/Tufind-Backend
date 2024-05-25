@@ -1,6 +1,9 @@
 package models
 
 type AuctionTutor struct {
-	AuctionID uint `json:"auction_id"`
-	TutorID   uint `json:"tutor_id"`
+	ID        uint    `gorm:"primaryKey"`
+	AuctionID uint    `json:"auction_id"`
+	Auction   Auction `gorm:"foreignKey:AuctionID" json:"auction"`
+	TutorID   uint    `json:"tutor_id"`
+	Tutor     Tutor   `gorm:"foreignKey:TutorID" json:"tutor"`
 }

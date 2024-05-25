@@ -19,6 +19,7 @@ type LoginPayload struct {
 type LoginResponse struct {
 	Token        string `json:"token"`
 	RefreshToken string `json:"refreshtoken"`
+	UserID       uint   `json:"userid"`
 }
 
 func SignUp(c *gin.Context) {
@@ -110,6 +111,7 @@ func Login(c *gin.Context) {
 	tokenResponse := LoginResponse{
 		Token:        signedToken,
 		RefreshToken: signedtoken,
+		UserID:       user.ID,
 	}
 	c.JSON(200, tokenResponse)
 }

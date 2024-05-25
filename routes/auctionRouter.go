@@ -11,6 +11,7 @@ func AuctionRoutes(incomingRoutes *gin.Engine) {
 	{
 		protected.GET("/auction/timer/:id", controller.GetAuctionTimer)
 		protected.POST("/auction", controller.CreateAuction)
+		protected.GET("/auction", controller.GetAuction)
 	}
 
 }

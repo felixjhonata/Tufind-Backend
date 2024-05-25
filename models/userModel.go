@@ -10,9 +10,9 @@ import (
 type User struct {
 	gorm.Model
 	ID       uint   `gorm:"primaryKey"`
-	Name     string `json:"name" binding:"required"`
-	Email    string `json:"email" binding:"required" gorm:"unique"`
-	Password string `json:"password" binding:"required"`
+	Name     string `json:"name" `
+	Email    string `json:"email" gorm:"unique"`
+	Password string `json:"password" `
 }
 
 func (user *User) CreateUserRecord() error {
