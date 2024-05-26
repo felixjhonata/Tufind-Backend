@@ -12,6 +12,7 @@ func BidRoutes(incomingRoutes *gin.Engine) {
 	{
 		protected.GET("/bid/:auction_id", controller.GetBids)
 		protected.PUT("/bid/:id", controller.UpdateBid)
+		protected.PUT("/bid/pay/:id", controller.AddProof)
 		protected.POST("/bid", controller.CreateBid)
 	}
 

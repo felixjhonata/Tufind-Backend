@@ -16,6 +16,10 @@ type UpdateBidsInput struct {
 	Price uint `json:"Price"`
 }
 
+type InputBidProof struct {
+	Proof string `json:"proof"`
+}
+
 func CreateBid(c *gin.Context) {
 	var bid models.Bid
 	if err := c.ShouldBindJSON(&bid); err != nil {
@@ -50,7 +54,9 @@ func CreateBid(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, bid)
+	c.JSON(http.StatusOK, gin.H{
+		"Message": "Sucessfully Bid",
+	})
 }
 
 func UpdateBid(c *gin.Context) {
@@ -135,4 +141,43 @@ func GetBidsByAuctionID(db *gorm.DB, auctionID uint) ([]models.Bid, error) {
 		return nil, err
 	}
 	return bids, nil
+}
+
+func AddProof(c *gin.Context) {
+	var input InputBidProof
+	id := c.Param("id")
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := AddBidProof(database.DB, id, input.Proof)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "proof updated"})
+
+}
+
+func AddBidProof(db *gorm.DB, bidID string, newproof string) error {
+	// Retrieve the bid from the database
+	var bid models.Bid
+	result := db.First(&bid, bidID)
+	if result.Error != nil {
+		return fmt.Errorf("failed to find bid: %v", result.Error)
+	}
+
+	// Update the bid amount
+	bid.Proof = newproof
+
+	// Save the updated bid back to the database
+	result = db.Save(&bid)
+	if result.Error != nil {
+		return fmt.Errorf("failed to update proof: %v", result.Error)
+	}
+
+	fmt.Printf("Bid proof updated successfully for bid ID %d\n", bid.ID)
+	return nil
 }

@@ -50,7 +50,9 @@ func CreateTutor() gin.HandlerFunc {
 		}
 
 		database.DB.Create(&tutor)
-		c.JSON(http.StatusOK, gin.H{"tutor": tutor})
+		c.JSON(http.StatusOK, gin.H{
+			"Message": "Sucessfully Created Tutor",
+		})
 	}
 }
 

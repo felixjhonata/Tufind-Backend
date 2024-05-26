@@ -21,6 +21,7 @@ type Bid struct {
 	Session        int          `json:"session"`
 	BidTime        time.Time    `json:"bid_time"`
 	Paid           bool         `json:"paid"`
+	Proof          string       `json:"proof,omitempty"`
 }
 
 func (b *Bid) DetermineStatus(price uint) string {

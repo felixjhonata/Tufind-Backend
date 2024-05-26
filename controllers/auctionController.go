@@ -67,7 +67,9 @@ func CreateAuction(c *gin.Context) {
 		database.DB.Create(&auctionTutor)
 	}
 
-	c.JSON(http.StatusCreated, auction)
+	c.JSON(http.StatusOK, gin.H{
+		"Message": "Sucessfully Created Auction",
+	})
 }
 
 func GetAuction(c *gin.Context) {
