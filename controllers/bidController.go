@@ -101,13 +101,13 @@ func UpdateBidAmount(db *gorm.DB, bidID string, newAmount uint) error {
 }
 
 func GetBids(c *gin.Context) {
-	auctionIDStr := c.Param("auction_id")
-	auctionID, err := strconv.Atoi(auctionIDStr)
+	userIDStr := c.Param("user_id")
+	userID, err := strconv.Atoi(userIDStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid auction ID"})
 		return
 	}
-	bids, err := GetBidsByAuctionID(database.DB, uint(auctionID))
+	bids, err := GetBidsByUserID(database.DB, uint(userID))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -130,12 +130,12 @@ func GetBids(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 
 }
-func GetBidsByAuctionID(db *gorm.DB, auctionID uint) ([]models.Bid, error) {
+func GetBidsByUserID(db *gorm.DB, userID uint) ([]models.Bid, error) {
 	var bids []models.Bid
 	err := db.Preload("User"). // Preload the User associated with each Bid
 					Preload("AuctionTutor.Auction").Preload("AuctionTutor.Tutor"). // Preload the Auction associated with each AuctionTutor
 					Joins("JOIN auction_tutors ON auction_tutors.id = bids.auction_tutor_id").
-					Where("auction_tutors.auction_id = ?", auctionID).
+					Where("user_id = ?", userID).
 					Find(&bids).Error
 	if err != nil {
 		return nil, err
