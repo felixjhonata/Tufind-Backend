@@ -134,7 +134,6 @@ func GetBidsByUserID(db *gorm.DB, userID uint) ([]models.Bid, error) {
 	var bids []models.Bid
 	err := db.Preload("User"). // Preload the User associated with each Bid
 					Preload("AuctionTutor.Auction").Preload("AuctionTutor.Tutor"). // Preload the Auction associated with each AuctionTutor
-					Joins("JOIN auction_tutors ON auction_tutors.id = bids.auction_tutor_id").
 					Where("user_id = ?", userID).
 					Find(&bids).Error
 	if err != nil {
@@ -169,9 +168,9 @@ func AddBidProof(db *gorm.DB, bidID string, newproof string) error {
 		return fmt.Errorf("failed to find bid: %v", result.Error)
 	}
 
-	// Update the bid amount
+	// Update the bid proof
 	bid.Proof = newproof
-
+	bid.Paid = true
 	// Save the updated bid back to the database
 	result = db.Save(&bid)
 	if result.Error != nil {
