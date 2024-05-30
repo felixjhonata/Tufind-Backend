@@ -3,6 +3,7 @@ package controllers
 import (
 	"Tufind-Backend/database"
 	"Tufind-Backend/models"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -55,6 +56,12 @@ func CreateAuction(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// change all tutor's price to 30
+	err1 := database.DB.Model(&models.Tutor{}).Where("true").Update("price", 30)
+	if err1 != nil {
+		fmt.Println("error:", err1)
 	}
 
 	// Create the auction
